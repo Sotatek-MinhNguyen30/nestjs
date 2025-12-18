@@ -94,11 +94,16 @@ export class UsersService {
     return await this.userModel.updateOne({_id: updateUserDto._id}, {...updateUserDto});
   }
 
-  remove(id: string) {
-    if(!mongoose.Types.ObjectId.isValid(id))
-      return "not found user";
-
-    return this.userModel.deleteOne({
+  async remove(id: string, user: IUser) {
+    await this.userModel.updateOne(
+      { _id: id },
+      {
+        deletedBy: {
+          _id: user._id,
+          email: user.email
+        }
+      })
+    return this.userModel.softDelete({
       _id: id
     })
   }
