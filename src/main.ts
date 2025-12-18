@@ -4,6 +4,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { TransformInterceptor } from './core/transform.interceptor';
+import cookieParser from 'cookie-parser';
 
 require ('dotenv').config();
 
@@ -25,6 +26,9 @@ async function bootstrap() {
   // prefix: 'api/v',
   defaultVersion: ['1', '2'] // v1, v2
   });
+
+  //config cookies
+  app.use(cookieParser());
 
 
   await app.listen(3000);
