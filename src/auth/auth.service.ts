@@ -49,14 +49,12 @@ export class AuthService {
             maxAge: ms(this.configService.get<string>("JWT_REFRESH_EXPIRE"))
         })
 
-        
         return {
             access_token: this.jwtService.sign(payload),
             user: {
                 _id,
                 name,
-                email,
-                role
+                email
             }
         };
     }
