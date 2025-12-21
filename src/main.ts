@@ -30,6 +30,15 @@ async function bootstrap() {
   //config cookies
   app.use(cookieParser());
 
+  //config cors
+  app.enableCors(
+    {
+      "origin": true,
+      "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+      "preflightContinue": false,
+      credentials: true
+    }
+  )
 
   await app.listen(3000);
 }
