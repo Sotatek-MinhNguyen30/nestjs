@@ -10,6 +10,9 @@ class Company {
 
     @IsNotEmpty()
     name: string;
+
+    @IsNotEmpty()
+    logo: string;
 }
 
 // cho admin
@@ -27,6 +30,9 @@ export class CreateJobDto {
     @ValidateNested()
     @Type(() => Company)
     company: Company;
+
+    @IsNotEmpty({message: 'Location không đc để trống',})
+    location: string;
 
     @IsNotEmpty({message: 'Salary không đc để trống',})
     salary: number;

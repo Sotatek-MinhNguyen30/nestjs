@@ -15,7 +15,8 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   
   const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  // app.useGlobalGuards(new JwtAuthGuard(reflector));
+  
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
 
   app.useStaticAssets(join(__dirname, '..', 'public'))
