@@ -9,6 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from 'src/decorator/customize';
+import { ADMIN_ROLE } from 'src/databases/sample';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -38,9 +39,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw err || new UnauthorizedException("Token không hợp lệ or không có token ở Bearer Token ở Header request");
     }
 
+    // Bypass permission check for SUPER_ADMIN
+    if (user?.role?.name === ADMIN_ROLE) {
+      return user;
+    }
+
     //check permission
     const targetMethod = request.method;
-    const targetEndpoint = request.route?.path as string;
+    // Use request.url and remove query string to get the full path
+    const urlPath = request.url.split('?')[0]; // Remove query parameters
+    const targetEndpoint = urlPath;
 
     const permissions = user?.permissions ?? [];
     let isExist = permissions.find(permission => 

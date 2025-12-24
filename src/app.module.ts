@@ -17,6 +17,7 @@ import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
 import { DatabasesModule } from './databases/databases.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
+import { MailModule } from './mail/mail.module';
 
 
 @Module({
@@ -39,7 +40,7 @@ import { SubscribersModule } from './subscribers/subscribers.module';
     }),
     UsersModule, 
     AuthModule, 
-    CompaniesModule, JobsModule, FilesModule, ResumesModule, PermissionsModule, RolesModule, DatabasesModule, SubscribersModule
+    CompaniesModule, JobsModule, FilesModule, ResumesModule, PermissionsModule, RolesModule, DatabasesModule, SubscribersModule, MailModule
   ],
   controllers: [AppController, UserController],
   providers: [AppService,
