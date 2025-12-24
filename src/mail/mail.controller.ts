@@ -1,14 +1,22 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { MailService } from './mail.service';
-import { CreateMailDto } from './dto/create-mail.dto';
-import { UpdateMailDto } from './dto/update-mail.dto';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { MailerService } from '@nestjs-modules/mailer';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { Subscriber, SubscriberDocument } from 'src/subscribers/schemas/subscriber.schema';
+import { Job, JobDocument } from 'src/jobs/schemas/job.schema';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Controller('mail')
 export class MailController {
   constructor(private readonly mailService: MailService,
     private mailerService: MailerService,
+
+    @InjectModel(Subscriber.name)
+    private subscriberModel: SoftDeleteModel<SubscriberDocument>,
+
+    @InjectModel(Job.name)
+    private jobModel: SoftDeleteModel<JobDocument>
   ) {}
 
 
@@ -16,36 +24,49 @@ export class MailController {
   @Public()
   @ResponseMessage("Test email")
   async handleTestEmail() {
-    await this.mailerService.sendMail({
-      to: "hori.sannkyouko@gmail.com",
-      from: '"Support Team" <support@example.com>', // override default from
-      subject: 'Welcome to Nice App! Confirm your Email',
-      html: '<b>welcome bla bla hoi dan it</b>', // HTML body content
-    });
+    const jobs = [
+      { name: "balbala",
+        company: "hoi dan it",
+        salary: 5000,
+        skills: ["React", "Node.js"]
+      },
+      { name: "balbala",
+        company: "hoi dan it",
+        salary: 5000,
+        skills: ["22", "Node.js222"]
+      },
+    ]
+
+    const subscribers = await this.subscriberModel.find({  });
+    for (const subs of subscribers) {
+      const subsSkills = subs.skills;
+      const jobWithMatchingSkills = await this.jobModel.find({ skills: { $in: subsSkills } });
+      if (jobWithMatchingSkills?.length) {
+        const jobs = jobWithMatchingSkills.map(item => {
+          return {
+            name: item.name,
+            company: item.company,
+            salary: `${item.salary}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " đ",
+            skills: item.skills
+          }
+        })
+
+        await this.mailerService.sendMail({
+          to: "hori.sannkyouko@gmail.com",
+          from: '"Support Team" <support@example.com>', // override default from
+          subject: 'Welcome to Nice App! Confirm your Email',
+          template: "new-job",
+          context: {
+            receiver: subs.name,
+            jobs: jobs
+          }
+        });
+      }
+    }
+
+
+
+    
   }
 
-  @Post()
-  create(@Body() createMailDto: CreateMailDto) {
-    return this.mailService.create(createMailDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.mailService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.mailService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMailDto: UpdateMailDto) {
-    return this.mailService.update(+id, updateMailDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.mailService.remove(+id);
-  }
 }

@@ -16,3 +16,6 @@ export const User = createParamDecorator(
     return request.user;
   },
 );
+
+export const IS_PUBLIC_PERMISSION = "isPublicPermission";
+export const SkilCheckPermission = () => SetMetadata(IS_PUBLIC_PERMISSION, true);
