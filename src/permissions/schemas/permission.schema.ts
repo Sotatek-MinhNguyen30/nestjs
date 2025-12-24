@@ -9,6 +9,10 @@ export class Permission {
   @Prop()
   name: string;
 
+  // Đường dẫn API (ví dụ: /api/v1/companies)
+  @Prop()
+  apiPath: string;
+
   @Prop()
   method: string;
 

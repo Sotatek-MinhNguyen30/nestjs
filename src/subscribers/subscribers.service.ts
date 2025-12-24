@@ -24,7 +24,7 @@ export class SubscribersService {
       throw new BadRequestException(`Email: ${email} đã tồn tại trên hệ thống`)
     }
 
-    const newSubs = await this.SubscriberModel.create({
+    let newSubs = await this.SubscriberModel.create({
       name, email, skills,
       createdBy: {
         _id: user._id,
@@ -40,7 +40,7 @@ export class SubscribersService {
   }
 
   async findAll(currentPage: number, limit: number, qs: string) {
-    const { filter, sort, population } = aqp(qs);
+    const { filter, sort, population, projection } = aqp(qs);
     delete filter.current;
     delete filter.pageSize;
 
@@ -56,6 +56,7 @@ export class SubscribersService {
       .limit(defaultLimit)
       .sort(sort as any)
       .populate(population)
+      .select(projection as any)
       .exec();
 
 
@@ -72,7 +73,7 @@ export class SubscribersService {
 
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`not found subscribers`);
+      return `not found subscribers`;
     }
     return await this.SubscriberModel.findOne({ _id: id });
   }
