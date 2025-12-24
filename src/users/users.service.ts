@@ -149,7 +149,7 @@ export class UsersService {
     }
 
     const foundUser = await this.userModel.findById(id);
-    if (foundUser.email === "admin@gmail.com") {
+    if (foundUser && foundUser.email === "admin@gmail.com") {
       throw new BadRequestException("Khong the xoa tai khoan")
     }
     await this.userModel.updateOne(
